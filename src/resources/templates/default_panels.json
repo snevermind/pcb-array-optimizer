@@ -1,0 +1,115 @@
+{
+  "template_name": "Standard PCB Production Panels",
+  "version": "1.0",
+  "description": "Common panel sizes and spacing used in PCB production",
+  "panels": [
+    {
+      "name": "18x24\" - 0.75\" border - 0.062\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 1.5748,
+      "array_spacing_y": 1.5748,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x24\" - 0.75\" border - 0.090\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 2.286,
+      "array_spacing_y": 2.286,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x24\" - 0.75\" border - 0.10\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x24\" - 0.75\" border - 0.12\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 3.048,
+      "array_spacing_y": 3.048,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x24\" - 1.0\" border - 0.090\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 2.286,
+      "array_spacing_y": 2.286,
+      "border_keepout_x": 25.4,
+      "border_keepout_y": 25.4
+    },
+    {
+      "name": "18x24\" - 1.0\" border - 0.10\" spacing",
+      "width": 457.2,
+      "height": 609.6,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 25.4,
+      "border_keepout_y": 25.4
+    },
+    {
+      "name": "24x18\" (Portrait) - 0.75\" border - 0.090\" spacing",
+      "width": 609.6,
+      "height": 457.2,
+      "array_spacing_x": 2.286,
+      "array_spacing_y": 2.286,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "24x18\" (Portrait) - 0.75\" border - 0.10\" spacing",
+      "width": 609.6,
+      "height": 457.2,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "24x18\" (Portrait) - 1.0\" border - 0.10\" spacing",
+      "width": 609.6,
+      "height": 457.2,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 25.4,
+      "border_keepout_y": 25.4
+    },
+    {
+      "name": "18x21\" - 0.75\" border - 0.090\" spacing",
+      "width": 457.2,
+      "height": 533.4,
+      "array_spacing_x": 2.286,
+      "array_spacing_y": 2.286,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x21\" - 0.75\" border - 0.10\" spacing",
+      "width": 457.2,
+      "height": 533.4,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 19.05,
+      "border_keepout_y": 19.05
+    },
+    {
+      "name": "18x21\" - 1.0\" border - 0.10\" spacing",
+      "width": 457.2,
+      "height": 533.4,
+      "array_spacing_x": 2.54,
+      "array_spacing_y": 2.54,
+      "border_keepout_x": 25.4,
+      "border_keepout_y": 25.4
+    }
+  ]
+}
