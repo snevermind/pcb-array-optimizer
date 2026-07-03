@@ -175,25 +175,48 @@ class PanelCanvas(QWidget):
         panel = self.panel
         array = panel.array
         config = self.configuration
+        rails = config.array_rails
+        spacing = config.array_spacing
 
-        # Get PCB dimensions based on rotation
+        # Get PCB dimensions in the array's own (un-rotated) local frame
         if array.pcbs_rotated:
-            pcb_width = config.pcb.height
-            pcb_height = config.pcb.width
+            local_pcb_width = config.pcb.height
+            local_pcb_height = config.pcb.width
         else:
-            pcb_width = config.pcb.width
-            pcb_height = config.pcb.height
+            local_pcb_width = config.pcb.width
+            local_pcb_height = config.pcb.height
+
+        if panel.arrays_rotated:
+            # The whole array block is rotated 90° to fit the panel, so its
+            # PCB grid, rails, and spacing must rotate along with it
+            pcb_width = local_pcb_height
+            pcb_height = local_pcb_width
+            count_x = array.pcb_count_y
+            count_y = array.pcb_count_x
+            spacing_x = spacing.y_spacing
+            spacing_y = spacing.x_spacing
+            rail_left = rails.bottom
+            rail_top = rails.left
+        else:
+            pcb_width = local_pcb_width
+            pcb_height = local_pcb_height
+            count_x = array.pcb_count_x
+            count_y = array.pcb_count_y
+            spacing_x = spacing.x_spacing
+            spacing_y = spacing.y_spacing
+            rail_left = rails.left
+            rail_top = rails.top
 
         # Starting position (accounting for rails)
-        start_x = array_x + config.array_rails.left * self.scale
-        start_y = array_y + config.array_rails.top * self.scale
+        start_x = array_x + rail_left * self.scale
+        start_y = array_y + rail_top * self.scale
 
         # Draw each PCB
-        for py in range(array.pcb_count_y):
-            for px in range(array.pcb_count_x):
+        for py in range(count_y):
+            for px in range(count_x):
                 # Calculate PCB position
-                pcb_x = start_x + px * (pcb_width + config.array_spacing.x_spacing) * self.scale
-                pcb_y = start_y + py * (pcb_height + config.array_spacing.y_spacing) * self.scale
+                pcb_x = start_x + px * (pcb_width + spacing_x) * self.scale
+                pcb_y = start_y + py * (pcb_height + spacing_y) * self.scale
 
                 # Draw PCB
                 pcb_rect = QRectF(
