@@ -60,6 +60,126 @@ jobs:
           name: PCBArrayOptimizer-Windows
           path: dist/PCBArrayOptimizer.exe
 
+  build-flatpak:
+    needs: build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Linux binary
+        uses: actions/download-artifact@v4
+        with:
+          name: PCBArrayOptimizer-Linux
+          path: dist
+
+      - name: Make binary executable
+        run: chmod +x dist/PCBArrayOptimizer
+
+      - name: Install flatpak-builder
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          sudo flatpak install --system -y --noninteractive flathub org.freedesktop.Platform//23.08 org.freedesktop.Sdk//23.08
+
+      - name: Set metainfo release version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then VERSION="0.0.0-dev"; fi
+          DATE="$(date -u +%Y-%m-%d)"
+          sed -i "s/version=\"0.0.0\" date=\"1970-01-01\"/version=\"$VERSION\" date=\"$DATE\"/" \
+            packaging/flatpak/io.github.snevermind.PcbArrayOptimizer.metainfo.xml
+
+      - name: Build flatpak bundle
+        run: |
+          flatpak-builder --force-clean --repo=repo build \
+            packaging/flatpak/io.github.snevermind.PcbArrayOptimizer.yml
+          flatpak build-bundle repo PCBArrayOptimizer.flatpak io.github.snevermind.PcbArrayOptimizer
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PCBArrayOptimizer-Flatpak
+          path: PCBArrayOptimizer.flatpak
+
+  build-deb:
+    needs: build-linux
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Linux binary
+        uses: actions/download-artifact@v4
+        with:
+          name: PCBArrayOptimizer-Linux
+          path: dist
+
+      - name: Make binary executable
+        run: chmod +x dist/PCBArrayOptimizer
+
+      - name: Install fpm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ruby ruby-dev build-essential
+          sudo gem install --no-document fpm
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=0.0.0-dev" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Stage package layout
+        run: |
+          mkdir -p pkgroot/usr/bin
+          mkdir -p pkgroot/usr/share/applications
+          mkdir -p pkgroot/usr/share/icons/hicolor/256x256/apps
+          cp dist/PCBArrayOptimizer pkgroot/usr/bin/pcb-array-optimizer
+          cp packaging/linux/pcb-array-optimizer.desktop pkgroot/usr/share/applications/pcb-array-optimizer.desktop
+          cp icon.png pkgroot/usr/share/icons/hicolor/256x256/apps/pcb-array-optimizer.png
+
+      - name: Build .deb
+        run: |
+          fpm -s dir -t deb \
+            -n pcb-array-optimizer \
+            -v "${{ steps.version.outputs.version }}" \
+            --maintainer "snevermind <snevermind13@gmail.com>" \
+            --description "Optimize PCB panelization for manufacturing" \
+            --url "https://github.com/snevermind/pcb-array-optimizer" \
+            --license "MIT" \
+            --category electronics \
+            --architecture amd64 \
+            --depends libxkbcommon-x11-0 \
+            --depends libxcb-cursor0 \
+            --depends libxcb-icccm4 \
+            --depends libxcb-image0 \
+            --depends libxcb-keysyms1 \
+            --depends libxcb-randr0 \
+            --depends libxcb-render-util0 \
+            --depends libxcb-xinerama0 \
+            --depends libegl1 \
+            --depends libopengl0 \
+            --depends libfontconfig1 \
+            --depends libdbus-1-3 \
+            -C pkgroot \
+            usr
+
+      - name: Smoke-test install and launch (Xvfb)
+        run: |
+          sudo apt-get install -y xvfb
+          sudo dpkg -i pcb-array-optimizer_*.deb || sudo apt-get install -f -y
+          xvfb-run --auto-servernum timeout 10 /usr/bin/pcb-array-optimizer || \
+            [ $? -eq 124 ]  # timeout (124) means it launched and stayed open - success
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PCBArrayOptimizer-deb
+          path: "*.deb"
+
   test:
     runs-on: ubuntu-latest
     steps:
@@ -80,7 +200,7 @@ jobs:
         run: pytest
 
   release:
-    needs: [build-linux, build-windows, test]
+    needs: [build-linux, build-windows, build-flatpak, build-deb, test]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
@@ -96,10 +216,24 @@ jobs:
           name: PCBArrayOptimizer-Windows
           path: windows
 
+      - name: Download Flatpak artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: PCBArrayOptimizer-Flatpak
+          path: flatpak
+
+      - name: Download .deb artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: PCBArrayOptimizer-deb
+          path: deb
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: |
             linux/PCBArrayOptimizer
             windows/PCBArrayOptimizer.exe
+            flatpak/PCBArrayOptimizer.flatpak
+            deb/*.deb
           generate_release_notes: true

@@ -1,0 +1,44 @@
+# Flatpak manifest for PCB Array Optimizer.
+#
+# This wraps the same PyInstaller Linux binary produced by the
+# `build-linux` CI job (see pcb_optimizer_linux.spec) rather than
+# building PyQt6/reportlab from source inside the Flatpak sandbox.
+# That keeps this self-hosted build simple and reuses a binary we've
+# already tested, but it is NOT how Flathub wants submissions built —
+# a Flathub submission would need to replace the "pcb-array-optimizer"
+# module below with a proper pip-based build (e.g. via
+# flatpak-pip-generator against requirements.txt) so everything is
+# compiled from pinned sources inside the sandbox instead of fetching
+# a pre-built binary.
+app-id: io.github.snevermind.PcbArrayOptimizer
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: pcb-array-optimizer
+
+finish-args:
+  - --share=ipc
+  - --socket=x11
+  - --socket=wayland
+  - --device=dri
+  - --filesystem=xdg-documents
+  - --filesystem=xdg-download
+
+modules:
+  - name: pcb-array-optimizer
+    buildsystem: simple
+    build-commands:
+      - install -Dm755 PCBArrayOptimizer /app/bin/pcb-array-optimizer
+      - install -Dm644 io.github.snevermind.PcbArrayOptimizer.desktop /app/share/applications/io.github.snevermind.PcbArrayOptimizer.desktop
+      - install -Dm644 io.github.snevermind.PcbArrayOptimizer.metainfo.xml /app/share/metainfo/io.github.snevermind.PcbArrayOptimizer.metainfo.xml
+      - install -Dm644 icon.png /app/share/icons/hicolor/256x256/apps/io.github.snevermind.PcbArrayOptimizer.png
+    sources:
+      - type: file
+        path: ../../dist/PCBArrayOptimizer
+        dest-filename: PCBArrayOptimizer
+      - type: file
+        path: io.github.snevermind.PcbArrayOptimizer.desktop
+      - type: file
+        path: io.github.snevermind.PcbArrayOptimizer.metainfo.xml
+      - type: file
+        path: ../../icon.png

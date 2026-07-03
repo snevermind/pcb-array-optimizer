@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.snevermind.PcbArrayOptimizer</id>
+  <name>PCB Array Optimizer</name>
+  <summary>Optimize PCB panelization for manufacturing</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <description>
+    <p>
+      PCB Array Optimizer calculates optimal arrangements of PCB arrays on
+      production panels to maximize material utilization and minimize waste.
+      Given a PCB size, spacing, rail widths, and a supplier's panel
+      dimensions, it ranks candidate array and panel configurations by
+      utilization and provides an interactive visualization and PDF export.
+    </p>
+  </description>
+  <launchable type="desktop-id">io.github.snevermind.PcbArrayOptimizer.desktop</launchable>
+  <url type="homepage">https://github.com/snevermind/pcb-array-optimizer</url>
+  <content_rating type="oars-1.1" />
+  <releases>
+    <release version="0.0.0" date="1970-01-01" />
+  </releases>
+</component>

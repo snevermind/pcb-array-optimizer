@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=PCB Array Optimizer
+Comment=Optimize PCB panelization for manufacturing
+Exec=pcb-array-optimizer
+Icon=io.github.snevermind.PcbArrayOptimizer
+Categories=Development;Engineering;Electronics;
+Terminal=false
