@@ -56,14 +56,15 @@ class LayoutOptimizer:
         # Process each panel size
         for panel_size in config.panel_sizes:
             # Generate arrays that could potentially fit
-            # Use panel usable dimensions as constraints to reduce search space
+            # Constrain by both the user's max array size and the panel's usable
+            # dimensions, whichever is tighter, to reduce search space
             arrays = ArrayBuilder.generate_arrays(
                 pcb=config.pcb,
                 spacing=config.array_spacing,
                 rails=config.array_rails,
                 allow_array_rotation=config.allow_array_rotation,
-                max_width_mm=panel_size.usable_width,
-                max_height_mm=panel_size.usable_height
+                max_width_mm=min(config.max_array_size.max_width, panel_size.usable_width),
+                max_height_mm=min(config.max_array_size.max_height, panel_size.usable_height)
             )
 
             # For each array, try fitting into panels
@@ -111,8 +112,8 @@ class LayoutOptimizer:
                 spacing=config.array_spacing,
                 rails=config.array_rails,
                 allow_array_rotation=config.allow_array_rotation,
-                max_width_mm=panel_size.usable_width,
-                max_height_mm=panel_size.usable_height
+                max_width_mm=min(config.max_array_size.max_width, panel_size.usable_width),
+                max_height_mm=min(config.max_array_size.max_height, panel_size.usable_height)
             )
 
             stats['arrays_per_panel'].append({

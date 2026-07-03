@@ -11,7 +11,7 @@ import os
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from src.models import PCB, ArraySpacing, ArrayRails, Configuration, UnitSystem
+from src.models import PCB, ArraySpacing, ArrayRails, MaxArraySize, Configuration, UnitSystem
 from src.core import LayoutOptimizer
 from src.io.template_manager import TemplateManager
 from src.export import PDFExporter
@@ -42,6 +42,11 @@ def main():
         right=5.0
     )
 
+    max_array_size = MaxArraySize(
+        max_width=300.0,
+        max_height=300.0
+    )
+
     # Load panel templates (use first 3)
     panel_sizes = TemplateManager.load_default_templates()[:3]
 
@@ -50,6 +55,7 @@ def main():
         pcb=pcb,
         array_spacing=spacing,
         array_rails=rails,
+        max_array_size=max_array_size,
         allow_array_rotation=True,
         panel_sizes=panel_sizes
     )

@@ -4,7 +4,7 @@ Unit tests for optimization algorithms.
 
 import pytest
 from src.models import (
-    PCB, ArraySpacing, ArrayRails, PanelSize, Configuration, UnitSystem, UserPreferences
+    PCB, ArraySpacing, ArrayRails, MaxArraySize, PanelSize, Configuration, UnitSystem, UserPreferences
 )
 from src.core import ArrayBuilder, PanelBuilder, LayoutOptimizer
 
@@ -262,6 +262,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=True,
             panel_sizes=[panel_size]
         )
@@ -299,6 +300,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=False,
             panel_sizes=[panel_size]
         )
@@ -324,6 +326,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=True,
             panel_sizes=panel_sizes
         )
@@ -353,6 +356,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=False,
             panel_sizes=[panel_size]
         )
@@ -382,6 +386,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=False,
             panel_sizes=[panel_size]
         )
@@ -408,6 +413,7 @@ class TestLayoutOptimizer:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=2000.0, max_height=2000.0),
             allow_array_rotation=True,
             panel_sizes=[panel_size]
         )

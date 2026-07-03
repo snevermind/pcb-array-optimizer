@@ -194,6 +194,9 @@ class PDFExporter:
              f'B: {UnitConverter.format_dimension(configuration.array_rails.bottom, unit_system)}  '
              f'L: {UnitConverter.format_dimension(configuration.array_rails.left, unit_system)}  '
              f'R: {UnitConverter.format_dimension(configuration.array_rails.right, unit_system)}'],
+            ['Max Array Size',
+             f'{UnitConverter.format_dimension(configuration.max_array_size.max_width, unit_system)} × '
+             f'{UnitConverter.format_dimension(configuration.max_array_size.max_height, unit_system)}'],
         ]
         story.append(Table(array_data, colWidths=[2*inch, 4*inch]))
         story[-1].setStyle(self._get_table_style())
@@ -380,6 +383,8 @@ class PDFExporter:
             ['Bottom Rail', UnitConverter.format_dimension(configuration.array_rails.bottom, unit_system)],
             ['Left Rail', UnitConverter.format_dimension(configuration.array_rails.left, unit_system)],
             ['Right Rail', UnitConverter.format_dimension(configuration.array_rails.right, unit_system)],
+            ['Max Array Width', UnitConverter.format_dimension(configuration.max_array_size.max_width, unit_system)],
+            ['Max Array Height', UnitConverter.format_dimension(configuration.max_array_size.max_height, unit_system)],
             ['Array Rotation', 'Allowed' if configuration.allow_array_rotation else 'Not Allowed']
         ]
 

@@ -79,6 +79,36 @@ class ArrayRails:
 
 
 @dataclass
+class MaxArraySize:
+    """Maximum allowed array dimensions (e.g. handling/tooling limits)"""
+
+    max_width: float   # mm
+    max_height: float  # mm
+
+    def __post_init__(self):
+        """Validate max array size"""
+        if self.max_width <= 0:
+            raise ValueError(f"Max array width must be positive, got {self.max_width}")
+        if self.max_height <= 0:
+            raise ValueError(f"Max array height must be positive, got {self.max_height}")
+
+    def to_dict(self) -> dict:
+        """Convert to dictionary for JSON serialization"""
+        return {
+            "max_width": self.max_width,
+            "max_height": self.max_height
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> 'MaxArraySize':
+        """Create from dictionary (JSON deserialization)"""
+        return cls(
+            max_width=data["max_width"],
+            max_height=data["max_height"]
+        )
+
+
+@dataclass
 class Array:
     """Represents an array of PCBs with spacing and rails"""
 

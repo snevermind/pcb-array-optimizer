@@ -4,7 +4,7 @@ Unit tests for core data models.
 
 import pytest
 from src.models import (
-    PCB, ArraySpacing, ArrayRails, Array,
+    PCB, ArraySpacing, ArrayRails, Array, MaxArraySize,
     PanelSize, Panel, Configuration,
     UnitSystem, UserPreferences
 )
@@ -104,6 +104,34 @@ class TestArrayRails:
         assert restored.bottom == rails.bottom
         assert restored.left == rails.left
         assert restored.right == rails.right
+
+
+class TestMaxArraySize:
+    """Test MaxArraySize data model"""
+
+    def test_create_max_array_size(self):
+        """Test creating max array size"""
+        max_size = MaxArraySize(max_width=300.0, max_height=300.0)
+        assert max_size.max_width == 300.0
+        assert max_size.max_height == 300.0
+
+    def test_invalid_zero_max_width(self):
+        """Test zero max width is invalid"""
+        with pytest.raises(ValueError, match="must be positive"):
+            MaxArraySize(max_width=0.0, max_height=300.0)
+
+    def test_invalid_negative_max_height(self):
+        """Test negative max height is invalid"""
+        with pytest.raises(ValueError, match="must be positive"):
+            MaxArraySize(max_width=300.0, max_height=-1.0)
+
+    def test_max_array_size_serialization(self):
+        """Test MaxArraySize to/from dict"""
+        max_size = MaxArraySize(max_width=300.0, max_height=400.0)
+        data = max_size.to_dict()
+        restored = MaxArraySize.from_dict(data)
+        assert restored.max_width == max_size.max_width
+        assert restored.max_height == max_size.max_height
 
 
 class TestArray:
@@ -631,6 +659,7 @@ class TestConfiguration:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=500.0, max_height=400.0),
             allow_array_rotation=True,
             panel_sizes=[panel_size],
             user_preferences=UserPreferences(unit_system=UnitSystem.METRIC)
@@ -648,6 +677,7 @@ class TestConfiguration:
                 pcb=pcb,
                 array_spacing=spacing,
                 array_rails=rails,
+                max_array_size=MaxArraySize(max_width=500.0, max_height=400.0),
                 allow_array_rotation=True,
                 panel_sizes=[]  # Empty!
             )
@@ -671,6 +701,7 @@ class TestConfiguration:
             pcb=pcb,
             array_spacing=spacing,
             array_rails=rails,
+            max_array_size=MaxArraySize(max_width=500.0, max_height=400.0),
             allow_array_rotation=True,
             panel_sizes=[panel_size],
             user_preferences=UserPreferences(unit_system=UnitSystem.IMPERIAL)

@@ -253,6 +253,8 @@ class ResultsPanel(QWidget):
                       f"B:{UnitConverter.format_dimension(config.array_rails.bottom, unit_system)} "
                       f"L:{UnitConverter.format_dimension(config.array_rails.left, unit_system)} "
                       f"R:{UnitConverter.format_dimension(config.array_rails.right, unit_system)}")
+        details.append(f"  Max Array Size: {UnitConverter.format_dimension(config.max_array_size.max_width, unit_system)} x "
+                      f"{UnitConverter.format_dimension(config.max_array_size.max_height, unit_system)}")
         details.append("")
 
         details.append("PANEL LAYOUT")

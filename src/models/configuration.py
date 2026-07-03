@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import List
 from datetime import datetime
 from .pcb import PCB
-from .array import ArraySpacing, ArrayRails
+from .array import ArraySpacing, ArrayRails, MaxArraySize
 from .panel_size import PanelSize
 from .units import UserPreferences
 
@@ -20,6 +20,7 @@ class Configuration:
     pcb: PCB
     array_spacing: ArraySpacing
     array_rails: ArrayRails
+    max_array_size: MaxArraySize
     allow_array_rotation: bool
     panel_sizes: List[PanelSize]
     user_preferences: UserPreferences = field(default_factory=UserPreferences)
@@ -46,6 +47,7 @@ class Configuration:
             "pcb": self.pcb.to_dict(),
             "array_spacing": self.array_spacing.to_dict(),
             "array_rails": self.array_rails.to_dict(),
+            "max_array_size": self.max_array_size.to_dict(),
             "allow_array_rotation": self.allow_array_rotation,
             "panel_sizes": [ps.to_dict() for ps in self.panel_sizes]
         }
@@ -61,6 +63,7 @@ class Configuration:
             pcb=PCB.from_dict(data["pcb"]),
             array_spacing=ArraySpacing.from_dict(data["array_spacing"]),
             array_rails=ArrayRails.from_dict(data["array_rails"]),
+            max_array_size=MaxArraySize.from_dict(data["max_array_size"]),
             allow_array_rotation=data["allow_array_rotation"],
             panel_sizes=[PanelSize.from_dict(ps) for ps in data["panel_sizes"]]
         )

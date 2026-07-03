@@ -12,7 +12,7 @@ from PyQt6.QtCore import pyqtSignal, Qt
 from typing import Optional, List
 
 from src.models import (
-    PCB, ArraySpacing, ArrayRails, PanelSize, Configuration,
+    PCB, ArraySpacing, ArrayRails, MaxArraySize, PanelSize, Configuration,
     UnitSystem, UserPreferences
 )
 from src.models.units import UnitConverter
@@ -192,6 +192,18 @@ class InputPanel(QWidget):
 
         layout.addWidget(rails_group)
 
+        # Max Array Size
+        max_array_group = QGroupBox("Max Array Size")
+        max_array_layout = QVBoxLayout(max_array_group)
+
+        self.max_array_width = DimensionInput("Max X:", 300.0)
+        self.max_array_height = DimensionInput("Max Y:", 300.0)
+
+        max_array_layout.addWidget(self.max_array_width)
+        max_array_layout.addWidget(self.max_array_height)
+
+        layout.addWidget(max_array_group)
+
         # Array Rotation
         array_rotation_group = QGroupBox("Array Options")
         array_rotation_layout = QVBoxLayout(array_rotation_group)
@@ -239,6 +251,8 @@ class InputPanel(QWidget):
         self.rail_bottom.value_changed.connect(self._update_configuration)
         self.rail_left.value_changed.connect(self._update_configuration)
         self.rail_right.value_changed.connect(self._update_configuration)
+        self.max_array_width.value_changed.connect(self._update_configuration)
+        self.max_array_height.value_changed.connect(self._update_configuration)
         self.array_rotation.stateChanged.connect(self._update_configuration)
 
         # Apply restored unit system to radio buttons and dimension inputs
@@ -309,6 +323,8 @@ class InputPanel(QWidget):
         self.rail_bottom.set_unit_system(self.unit_system)
         self.rail_left.set_unit_system(self.unit_system)
         self.rail_right.set_unit_system(self.unit_system)
+        self.max_array_width.set_unit_system(self.unit_system)
+        self.max_array_height.set_unit_system(self.unit_system)
 
         self._update_panel_info()
         self._save_prefs()
@@ -338,6 +354,12 @@ class InputPanel(QWidget):
                 right=self.rail_right.get_value_mm()
             )
 
+            # Create max array size
+            max_array_size = MaxArraySize(
+                max_width=self.max_array_width.get_value_mm(),
+                max_height=self.max_array_height.get_value_mm()
+            )
+
             # Create user preferences
             preferences = UserPreferences(
                 unit_system=self.unit_system
@@ -354,6 +376,7 @@ class InputPanel(QWidget):
                 pcb=pcb,
                 array_spacing=spacing,
                 array_rails=rails,
+                max_array_size=max_array_size,
                 allow_array_rotation=self.array_rotation.isChecked(),
                 panel_sizes=[selected],
                 user_preferences=preferences
@@ -398,6 +421,9 @@ class InputPanel(QWidget):
         self.rail_left.set_value_mm(5.0)
         self.rail_right.set_value_mm(5.0)
 
+        self.max_array_width.set_value_mm(300.0)
+        self.max_array_height.set_value_mm(300.0)
+
         self.array_rotation.setChecked(True)
 
         self.panel_sizes = TemplateManager.load_default_templates()
@@ -429,6 +455,10 @@ class InputPanel(QWidget):
         self.rail_bottom.set_value_mm(config.array_rails.bottom)
         self.rail_left.set_value_mm(config.array_rails.left)
         self.rail_right.set_value_mm(config.array_rails.right)
+
+        # Set max array size
+        self.max_array_width.set_value_mm(config.max_array_size.max_width)
+        self.max_array_height.set_value_mm(config.max_array_size.max_height)
 
         # Set array rotation
         self.array_rotation.setChecked(config.allow_array_rotation)
