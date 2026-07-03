@@ -167,11 +167,13 @@ jobs:
             -C pkgroot \
             usr
 
-      - name: Smoke-test install and launch (Xvfb)
+      - name: Smoke-test install and launch
+        # Uses Qt's built-in "offscreen" platform plugin rather than a real/virtual
+        # X server: this just verifies the binary and its declared runtime deps
+        # actually resolve and the app starts, without needing the full xcb stack.
         run: |
-          sudo apt-get install -y xvfb
           sudo dpkg -i pcb-array-optimizer_*.deb || sudo apt-get install -f -y
-          xvfb-run --auto-servernum timeout 10 /usr/bin/pcb-array-optimizer || \
+          QT_QPA_PLATFORM=offscreen timeout 10 /usr/bin/pcb-array-optimizer || \
             [ $? -eq 124 ]  # timeout (124) means it launched and stayed open - success
 
       - name: Upload artifact
@@ -189,6 +191,13 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Install system Qt runtime deps
+        # pytest-qt imports PyQt6.QtGui at collection time (even with no
+        # qtbot-using tests), which needs libEGL present just to import.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1
 
       - name: Install dependencies
         run: |
